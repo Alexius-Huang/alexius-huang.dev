@@ -1,6 +1,7 @@
 name: CD Workflow
 on:
-  push
+  push:
+    branches: [main]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
