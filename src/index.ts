@@ -7,6 +7,8 @@ import Dimension from './dimension';
 import TextureLoader from './texture-loader';
 import vertexShader from './shaders/vertex.glsl';
 import fragmentShader from './shaders/fragment.glsl';
+import waterVertexShader from './shaders/water-vertex.glsl';
+import waterFragmentShader from './shaders/water-fragment.glsl';
 
 /**
  * Base
@@ -71,12 +73,17 @@ gltfLoader.load('/scene.glb', gltf => {
 /**
  * Object
  */
-// const cube = new THREE.Mesh(
-//     new THREE.BoxGeometry(1, 1, 1),
-//     new THREE.MeshBasicMaterial(),
-// );
-
-// scene.add(cube);
+const waterGeometry = new THREE.PlaneGeometry(4 - .01, 2, 32, 16);
+const waterMaterial = new THREE.ShaderMaterial({
+    vertexShader: waterVertexShader,
+    fragmentShader: waterFragmentShader,
+    wireframe: true
+});
+const water = new THREE.Mesh(waterGeometry, waterMaterial);
+water.rotation.x = Math.PI / 2;
+water.position.z = 1;
+water.position.y = -.2;
+scene.add(water);
 
 /**
  * Sizes
