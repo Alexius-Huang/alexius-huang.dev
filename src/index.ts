@@ -49,7 +49,7 @@ gltfLoader.setDRACOLoader(dracoLoader);
 gltfLoader.load('/scene.glb', gltf => {
     scene.add(gltf.scene);
     gltf.scene.traverse(child => {
-        child.material = bgMaterial;
+        (child as THREE.Mesh).material = bgMaterial;
     })
 });
 
