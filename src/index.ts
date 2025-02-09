@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import Dimension from './dimension';
+import TextureLoader from './texture-loader';
 
 /**
  * Base
@@ -26,15 +27,10 @@ const scene = new THREE.Scene();
  * Loaders
  */
 // Texture loader
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new TextureLoader();
 
 const bgWithBonFireLightTexture = textureLoader.load('./baked-bg-with-bon-fire.webp');
-bgWithBonFireLightTexture.flipY = false;
-bgWithBonFireLightTexture.colorSpace = THREE.SRGBColorSpace;
-
 const bgTexture = textureLoader.load('./baked-bg.webp');
-bgTexture.flipY = false;
-bgTexture.colorSpace = THREE.SRGBColorSpace;
 
 const bgMaterial = new THREE.MeshBasicMaterial({ map: bgWithBonFireLightTexture });
 
