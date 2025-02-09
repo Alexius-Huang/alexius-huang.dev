@@ -30,11 +30,16 @@ const textureLoader = new THREE.TextureLoader();
 
 // Draco loader
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('draco/');
+dracoLoader.setDecoderPath('./draco/');
 
 // GLTF loader
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
+
+gltfLoader.load('/scene.glb', gltf => {
+    console.log(gltf);
+});
+
 
 /**
  * Object
