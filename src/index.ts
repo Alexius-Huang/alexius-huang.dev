@@ -77,10 +77,14 @@ const waterGeometry = new THREE.PlaneGeometry(4 - .01, 2, 32, 16);
 const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
-    wireframe: true
+    uniforms: {
+        uNoiseTexture: new THREE.Uniform(noiseTexture),
+        uTime: new THREE.Uniform(0)
+    },
+    transparent: true
 });
 const water = new THREE.Mesh(waterGeometry, waterMaterial);
-water.rotation.x = Math.PI / 2;
+water.rotation.x = - Math.PI / 2;
 water.position.z = 1;
 water.position.y = -.2;
 scene.add(water);
@@ -136,6 +140,7 @@ const clock = new THREE.Clock();
 renderer.setAnimationLoop(function animation() {
     const elapsedTime = clock.getElapsedTime();
     bgMaterial.uniforms.uTime.value = elapsedTime;
+    waterMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
