@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import Dimension from './dimension';
 
 /**
  * Base
@@ -48,22 +49,14 @@ scene.add(cube);
 /**
  * Sizes
  */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-};
-
-window.addEventListener('resize', () => {
-    // Update sizes
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
-
+const sizes = new Dimension();
+sizes.onResize(([width, height]) => {
     // Update camera
-    camera.aspect = sizes.width / sizes.height;
+    camera.aspect = sizes.aspectRatio;
     camera.updateProjectionMatrix();
 
     // Update renderer
-    renderer.setSize(sizes.width, sizes.height);
+    renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
@@ -73,7 +66,7 @@ window.addEventListener('resize', () => {
 // Base camera
 const camera = new THREE.PerspectiveCamera(
     45,
-    sizes.width / sizes.height,
+    sizes.aspectRatio,
     0.1,
     100,
 );
@@ -101,7 +94,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  */
 const clock = new THREE.Clock();
 
-const tick = () => {
+renderer.setAnimationLoop(function animation() {
     const elapsedTime = clock.getElapsedTime();
 
     // Update controls
@@ -109,9 +102,4 @@ const tick = () => {
 
     // Render
     renderer.render(scene, camera);
-
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick);
-};
-
-tick();
+});
