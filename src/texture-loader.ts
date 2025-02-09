@@ -5,8 +5,10 @@ export default class TextureLoader {
 
     public load(asset: string) {
         const texture = this.loader.load(asset);
+
+        // TODO: Refactor this into listeners with callback function
         texture.flipY = false;
-        texture.colorSpace = THREE.SRGBColorSpace;
+        // texture.colorSpace = THREE.SRGBColorSpace;
 
         return texture;
     }

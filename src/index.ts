@@ -5,6 +5,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import Dimension from './dimension';
 import TextureLoader from './texture-loader';
+import vertexShader from './shaders/vertex.glsl';
+import fragmentShader from './shaders/fragment.glsl';
 
 /**
  * Base
@@ -32,9 +34,20 @@ const textureLoader = new TextureLoader();
 const bgWithBonFireLightTexture = textureLoader.load('./baked-bg-with-bon-fire.webp');
 const bgTexture = textureLoader.load('./baked-bg.webp');
 
-const bgMaterial = new THREE.MeshBasicMaterial({ map: bgWithBonFireLightTexture });
+const bgMaterial = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+        uBonFireLightTexture: new THREE.Uniform(bgWithBonFireLightTexture),
+        uBackgroundTexture: new THREE.Uniform(bgTexture),
+        uMixStrength: new THREE.Uniform(.95)
+    }
+});
 
-// Draco loader
+gui.add(bgMaterial.uniforms.uMixStrength, 'value')
+    .min(0).max(1).step(.01);
+
+// Draco loaders
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('./draco/');
 
