@@ -29,11 +29,14 @@ const scene = new THREE.Scene();
 const textureLoader = new THREE.TextureLoader();
 
 const bgWithBonFireLightTexture = textureLoader.load('./baked-bg-with-bon-fire.webp');
-const bgTexture = textureLoader.load('./baked-bg.webp');
+bgWithBonFireLightTexture.flipY = false;
+bgWithBonFireLightTexture.colorSpace = THREE.SRGBColorSpace;
 
+const bgTexture = textureLoader.load('./baked-bg.webp');
 bgTexture.flipY = false;
 bgTexture.colorSpace = THREE.SRGBColorSpace;
-const bgMaterial = new THREE.MeshBasicMaterial({ map: bgTexture });
+
+const bgMaterial = new THREE.MeshBasicMaterial({ map: bgWithBonFireLightTexture });
 
 // Draco loader
 const dracoLoader = new DRACOLoader();
@@ -46,7 +49,7 @@ gltfLoader.setDRACOLoader(dracoLoader);
 gltfLoader.load('/scene.glb', gltf => {
     scene.add(gltf.scene);
     gltf.scene.traverse(child => {
-        child.material = bgWithBonFireLightTexture;
+        child.material = bgMaterial;
     })
 });
 
