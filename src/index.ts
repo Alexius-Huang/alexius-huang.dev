@@ -33,6 +33,9 @@ const textureLoader = new TextureLoader();
 
 const bgWithBonFireLightTexture = textureLoader.load('./baked-bg-with-bon-fire.webp');
 const bgTexture = textureLoader.load('./baked-bg.webp');
+const noiseTexture = textureLoader.load('./perlin-noise.webp');
+noiseTexture.wrapS = THREE.RepeatWrapping;
+noiseTexture.wrapT = THREE.RepeatWrapping;
 
 const bgMaterial = new THREE.ShaderMaterial({
     vertexShader,
@@ -40,7 +43,9 @@ const bgMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uBonFireLightTexture: new THREE.Uniform(bgWithBonFireLightTexture),
         uBackgroundTexture: new THREE.Uniform(bgTexture),
-        uMixStrength: new THREE.Uniform(.95)
+        uNoiseTexture: new THREE.Uniform(noiseTexture),
+        uMixStrength: new THREE.Uniform(.95),
+        uTime: new THREE.Uniform(0)
     }
 });
 
@@ -123,6 +128,7 @@ const clock = new THREE.Clock();
 
 renderer.setAnimationLoop(function animation() {
     const elapsedTime = clock.getElapsedTime();
+    bgMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
