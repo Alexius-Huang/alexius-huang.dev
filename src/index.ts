@@ -11,6 +11,8 @@ import waterVertexShader from './shaders/water-vertex.glsl';
 import waterFragmentShader from './shaders/water-fragment.glsl';
 import fireflyVertexShader from './shaders/firefly-vertex.glsl';
 import fireflyFragmentShader from './shaders/firefly-fragment.glsl';
+import bonfireVertexShader from './shaders/bonfire-vertex.glsl';
+import bonfireFragmentShader from './shaders/bonfire-fragment.glsl';
 
 /**
  * Base
@@ -19,7 +21,7 @@ import fireflyFragmentShader from './shaders/firefly-fragment.glsl';
 const gui = new GUI({
     width: 400,
 });
-gui.hide();
+// gui.hide();
 
 // Canvas
 const canvas = document.querySelector<HTMLCanvasElement>('canvas.webgl');
@@ -93,6 +95,40 @@ water.position.y = -.2;
 scene.add(water);
 
 /**
+ *  Bon Fire
+ */
+const bonfireGeometry = new THREE.BufferGeometry();
+const bonfireParticleCount = 50;
+const bonfirePositionArray = new Float32Array(bonfireParticleCount * 3);
+for (let i = 0; i < bonfireParticleCount; i++) {
+    const offset = i * 3;
+    bonfirePositionArray[offset] = (Math.random() - .5) * .25;
+    bonfirePositionArray[offset + 1] = Math.random() * .5 + .05;
+    bonfirePositionArray[offset + 2] = (Math.random() - .5) * .25;
+}
+bonfireGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(bonfirePositionArray, 3)
+);
+
+const bonfireMaterial = new THREE.ShaderMaterial({
+    vertexShader: bonfireVertexShader,
+    fragmentShader: bonfireFragmentShader,
+    uniforms: {
+        uTime: new THREE.Uniform(0),
+        uSize: new THREE.Uniform(10),
+        uPixelRatio: new THREE.Uniform(
+            Math.min(window.devicePixelRatio, 2)
+        )
+    }
+});
+const bonFire = new THREE.Points(
+    bonfireGeometry,
+    bonfireMaterial
+);
+scene.add(bonFire);
+
+/**
  *  Fireflies 
  */
 const firefliesGeometry = new THREE.BufferGeometry();
@@ -154,6 +190,8 @@ sizes.onResize(([width, height]) => {
     // Update pixel ratio on firefly material
     firefliesMaterial.uniforms.uPixelRatio.value =
         Math.min(window.devicePixelRatio, 2)
+    bonfireMaterial.uniforms.uPixelRatio.value =
+        Math.min(window.devicePixelRatio, 2)
 });
 
 /**
@@ -196,6 +234,7 @@ renderer.setAnimationLoop(function animation() {
     bgMaterial.uniforms.uTime.value = elapsedTime;
     waterMaterial.uniforms.uTime.value = elapsedTime;
     firefliesMaterial.uniforms.uTime.value = elapsedTime;
+    bonfireMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
