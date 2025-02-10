@@ -98,6 +98,8 @@ const bonfireGeometry = new THREE.BufferGeometry();
 const bonfireParticleCount = 50;
 const bonfirePositionArray = new Float32Array(bonfireParticleCount * 3);
 const bonfireSpeedRandomnessArray = new Float32Array(bonfireParticleCount);
+const bonfireSparkXRandomnessArray = new Float32Array(bonfireParticleCount * 3);
+const bonfireSparkZRandomnessArray = new Float32Array(bonfireParticleCount * 3);
 for (let i = 0; i < bonfireParticleCount; i++) {
     const offset = i * 3;
     bonfirePositionArray[offset] = (Math.random() - .5) * .25;
@@ -105,6 +107,16 @@ for (let i = 0; i < bonfireParticleCount; i++) {
     bonfirePositionArray[offset + 2] = (Math.random() - .5) * .25;
 
     bonfireSpeedRandomnessArray[offset] = Math.random() * .5;
+
+    // x-phase start, speed, amplitude
+    bonfireSparkXRandomnessArray[offset] = Math.random() * 4 + 1;
+    bonfireSparkXRandomnessArray[offset + 1] = Math.random() * 4 + 1;
+    bonfireSparkXRandomnessArray[offset + 2] = Math.random() * .1 + .05;
+
+    // z-phase start, speed, amplitude
+    bonfireSparkZRandomnessArray[offset] = Math.random() * 4 + 1;
+    bonfireSparkZRandomnessArray[offset + 1] = Math.random() * 4 + 1;
+    bonfireSparkZRandomnessArray[offset + 2] = Math.random() * .1 + .05;
 }
 bonfireGeometry.setAttribute(
     'position',
@@ -113,6 +125,14 @@ bonfireGeometry.setAttribute(
 bonfireGeometry.setAttribute(
     'aSpeedRandomness',
     new THREE.BufferAttribute(bonfireSpeedRandomnessArray, 1)
+);
+bonfireGeometry.setAttribute(
+    'aSparkXPositionRandomness',
+    new THREE.BufferAttribute(bonfireSparkXRandomnessArray, 3)
+);
+bonfireGeometry.setAttribute(
+    'aSparkZPositionRandomness',
+    new THREE.BufferAttribute(bonfireSparkXRandomnessArray, 3)
 );
 
 const bonfireMaterial = new THREE.ShaderMaterial({
@@ -124,9 +144,10 @@ const bonfireMaterial = new THREE.ShaderMaterial({
         uPixelRatio: new THREE.Uniform(
             Math.min(window.devicePixelRatio, 2)
         ),
-        uSparkSpeed: new THREE.Uniform(80),
+        uSparkSpeed: new THREE.Uniform(50),
         uSparkHeight: new THREE.Uniform(.6),
-        uSparkSizeMultiplier: new THREE.Uniform(12)
+        uSparkSizeMultiplier: new THREE.Uniform(12),
+        uNoiseTexture: new THREE.Uniform(noiseTexture)
     }
 });
 const bonfire = new THREE.Points(
