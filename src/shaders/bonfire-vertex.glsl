@@ -6,11 +6,13 @@ uniform float uSparkHeight;
 uniform float uSparkSizeMultiplier;
 uniform float uSparkSpeed;
 
+attribute float aSpeedRandomness;
+
 const float largestDistanceFromCenter = distance(vec2(.25, .25), vec2(.0));
 
 void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    modelPosition.y += uTime * (uSparkSpeed / 100.0);
+    modelPosition.y += uTime * ((uSparkSpeed / 100.0) + aSpeedRandomness);
     modelPosition.y = mod(modelPosition.y, uSparkHeight);
 
     vec4 viewPosition = viewMatrix * modelPosition;

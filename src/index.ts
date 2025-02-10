@@ -97,15 +97,22 @@ scene.add(water);
 const bonfireGeometry = new THREE.BufferGeometry();
 const bonfireParticleCount = 50;
 const bonfirePositionArray = new Float32Array(bonfireParticleCount * 3);
+const bonfireSpeedRandomnessArray = new Float32Array(bonfireParticleCount);
 for (let i = 0; i < bonfireParticleCount; i++) {
     const offset = i * 3;
     bonfirePositionArray[offset] = (Math.random() - .5) * .25;
     bonfirePositionArray[offset + 1] = Math.random() * .5 + .05;
     bonfirePositionArray[offset + 2] = (Math.random() - .5) * .25;
+
+    bonfireSpeedRandomnessArray[offset] = Math.random() * .5;
 }
 bonfireGeometry.setAttribute(
     'position',
     new THREE.BufferAttribute(bonfirePositionArray, 3)
+);
+bonfireGeometry.setAttribute(
+    'aSpeedRandomness',
+    new THREE.BufferAttribute(bonfireSpeedRandomnessArray, 1)
 );
 
 const bonfireMaterial = new THREE.ShaderMaterial({
