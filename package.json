@@ -1,16 +1,23 @@
 {
-  "name": "alexius-huang.dev",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "vite",
-    "build": "vite build"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "vite": "^6.1.0"
-  }
+    "name": "alexius-huang.dev",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "vite",
+        "build": "vite build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/three": "^0.173.0",
+        "lil-gui": "^0.20.0",
+        "prettier": "^3.5.0",
+        "vite": "^6.1.0",
+        "vite-plugin-glsl": "^1.3.1"
+    },
+    "dependencies": {
+        "three": "^0.173.0"
+    }
 }
