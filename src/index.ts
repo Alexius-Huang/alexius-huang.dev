@@ -21,7 +21,7 @@ import bonfireFragmentShader from './shaders/bonfire-fragment.glsl';
 const gui = new GUI({
     width: 400,
 });
-// gui.hide();
+gui.hide();
 
 // Canvas
 const canvas = document.querySelector<HTMLCanvasElement>('canvas.webgl');
