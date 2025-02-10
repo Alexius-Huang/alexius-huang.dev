@@ -12,6 +12,8 @@ attribute vec3 aSparkZPositionRandomness;
 
 const float largestDistanceFromCenter = distance(vec2(.25, .25), vec2(.0));
 
+varying vec4 vPointPosition;
+
 void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     modelPosition.y += uTime * ((uSparkSpeed / 100.0) + aSpeedRandomness);
@@ -38,4 +40,6 @@ void main() {
 
     gl_PointSize = uSize * uPixelRatio * scale * attenuateFromDistance;
     gl_PointSize /= -viewPosition.z;
+
+    vPointPosition = modelPosition;
 }

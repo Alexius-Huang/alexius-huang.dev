@@ -95,16 +95,16 @@ scene.add(water);
  *  Bon Fire
  */
 const bonfireGeometry = new THREE.BufferGeometry();
-const bonfireParticleCount = 50;
+const bonfireParticleCount = 80;
 const bonfirePositionArray = new Float32Array(bonfireParticleCount * 3);
 const bonfireSpeedRandomnessArray = new Float32Array(bonfireParticleCount);
 const bonfireSparkXRandomnessArray = new Float32Array(bonfireParticleCount * 3);
 const bonfireSparkZRandomnessArray = new Float32Array(bonfireParticleCount * 3);
 for (let i = 0; i < bonfireParticleCount; i++) {
     const offset = i * 3;
-    bonfirePositionArray[offset] = (Math.random() - .5) * .25;
+    bonfirePositionArray[offset] = (Math.random() - .5) * .15;
     bonfirePositionArray[offset + 1] = Math.random() * .5 + .05;
-    bonfirePositionArray[offset + 2] = (Math.random() - .5) * .25;
+    bonfirePositionArray[offset + 2] = (Math.random() - .5) * .15;
 
     bonfireSpeedRandomnessArray[offset] = Math.random() * .5;
 
@@ -148,7 +148,9 @@ const bonfireMaterial = new THREE.ShaderMaterial({
         uSparkHeight: new THREE.Uniform(.6),
         uSparkSizeMultiplier: new THREE.Uniform(12),
         uNoiseTexture: new THREE.Uniform(noiseTexture)
-    }
+    },
+    transparent: true,
+    blending: THREE.AdditiveBlending
 });
 const bonfire = new THREE.Points(
     bonfireGeometry,
