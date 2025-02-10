@@ -11,6 +11,8 @@ import waterVertexShader from './shaders/water-vertex.glsl';
 import waterFragmentShader from './shaders/water-fragment.glsl';
 import fireflyVertexShader from './shaders/firefly-vertex.glsl';
 import fireflyFragmentShader from './shaders/firefly-fragment.glsl';
+import bonfireVertexShader from './shaders/bonfire-vertex.glsl';
+import bonfireFragmentShader from './shaders/bonfire-fragment.glsl';
 
 /**
  * Base
@@ -54,9 +56,6 @@ const bgMaterial = new THREE.ShaderMaterial({
     }
 });
 
-gui.add(bgMaterial.uniforms.uMixStrength, 'value')
-    .min(0).max(1).step(.01);
-
 // Draco loaders
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('./draco/');
@@ -91,6 +90,81 @@ water.rotation.x = - Math.PI / 2;
 water.position.z = 1;
 water.position.y = -.2;
 scene.add(water);
+
+/**
+ *  Bon Fire
+ */
+const bonfireGeometry = new THREE.BufferGeometry();
+const bonfireParticleCount = 80;
+const bonfirePositionArray = new Float32Array(bonfireParticleCount * 3);
+const bonfireSpeedRandomnessArray = new Float32Array(bonfireParticleCount);
+const bonfireSparkXRandomnessArray = new Float32Array(bonfireParticleCount * 3);
+const bonfireSparkZRandomnessArray = new Float32Array(bonfireParticleCount * 3);
+for (let i = 0; i < bonfireParticleCount; i++) {
+    const offset = i * 3;
+    bonfirePositionArray[offset] = (Math.random() - .5) * .15;
+    bonfirePositionArray[offset + 1] = Math.random() * .5 + .05;
+    bonfirePositionArray[offset + 2] = (Math.random() - .5) * .15;
+
+    bonfireSpeedRandomnessArray[offset] = Math.random() * .5;
+
+    // x-phase start, speed, amplitude
+    bonfireSparkXRandomnessArray[offset] = Math.random() * 4 + 1;
+    bonfireSparkXRandomnessArray[offset + 1] = Math.random() * 4 + 1;
+    bonfireSparkXRandomnessArray[offset + 2] = Math.random() * .1 + .05;
+
+    // z-phase start, speed, amplitude
+    bonfireSparkZRandomnessArray[offset] = Math.random() * 4 + 1;
+    bonfireSparkZRandomnessArray[offset + 1] = Math.random() * 4 + 1;
+    bonfireSparkZRandomnessArray[offset + 2] = Math.random() * .1 + .05;
+}
+bonfireGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(bonfirePositionArray, 3)
+);
+bonfireGeometry.setAttribute(
+    'aSpeedRandomness',
+    new THREE.BufferAttribute(bonfireSpeedRandomnessArray, 1)
+);
+bonfireGeometry.setAttribute(
+    'aSparkXPositionRandomness',
+    new THREE.BufferAttribute(bonfireSparkXRandomnessArray, 3)
+);
+bonfireGeometry.setAttribute(
+    'aSparkZPositionRandomness',
+    new THREE.BufferAttribute(bonfireSparkXRandomnessArray, 3)
+);
+
+const bonfireMaterial = new THREE.ShaderMaterial({
+    vertexShader: bonfireVertexShader,
+    fragmentShader: bonfireFragmentShader,
+    uniforms: {
+        uTime: new THREE.Uniform(0),
+        uSize: new THREE.Uniform(10),
+        uPixelRatio: new THREE.Uniform(
+            Math.min(window.devicePixelRatio, 2)
+        ),
+        uSparkSpeed: new THREE.Uniform(50),
+        uSparkHeight: new THREE.Uniform(.6),
+        uSparkSizeMultiplier: new THREE.Uniform(12),
+        uNoiseTexture: new THREE.Uniform(noiseTexture)
+    },
+    transparent: true,
+    blending: THREE.AdditiveBlending
+});
+const bonfire = new THREE.Points(
+    bonfireGeometry,
+    bonfireMaterial
+);
+scene.add(bonfire);
+
+const bonfireGUI = gui.addFolder('Bonfire');
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkHeight, 'value')
+    .min(0).max(1).step(.01).name('Spark Height');
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkSizeMultiplier, 'value')
+    .min(0).max(100).step(1).name('Size Multiplier')
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkSpeed, 'value')
+    .min(1).max(100).step(1).name('Spark Speed');
 
 /**
  *  Fireflies 
@@ -154,6 +228,8 @@ sizes.onResize(([width, height]) => {
     // Update pixel ratio on firefly material
     firefliesMaterial.uniforms.uPixelRatio.value =
         Math.min(window.devicePixelRatio, 2)
+    bonfireMaterial.uniforms.uPixelRatio.value =
+        Math.min(window.devicePixelRatio, 2)
 });
 
 /**
@@ -196,6 +272,7 @@ renderer.setAnimationLoop(function animation() {
     bgMaterial.uniforms.uTime.value = elapsedTime;
     waterMaterial.uniforms.uTime.value = elapsedTime;
     firefliesMaterial.uniforms.uTime.value = elapsedTime;
+    bonfireMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
