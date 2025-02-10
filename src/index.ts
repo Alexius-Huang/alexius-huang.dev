@@ -9,6 +9,8 @@ import vertexShader from './shaders/vertex.glsl';
 import fragmentShader from './shaders/fragment.glsl';
 import waterVertexShader from './shaders/water-vertex.glsl';
 import waterFragmentShader from './shaders/water-fragment.glsl';
+import fireflyVertexShader from './shaders/firefly-vertex.glsl';
+import fireflyFragmentShader from './shaders/firefly-fragment.glsl';
 
 /**
  * Base
@@ -90,6 +92,52 @@ water.position.y = -.2;
 scene.add(water);
 
 /**
+ *  Fireflies 
+ */
+const firefliesGeometry = new THREE.BufferGeometry();
+const firefliesCount = 30;
+const firefliesPositionArray = new Float32Array(firefliesCount * 3);
+const firefliesSizeScaleArray = new Float32Array(firefliesCount);
+for (let i = 0; i < firefliesCount; i++) {
+    const offset = i * 3;
+    firefliesPositionArray[offset] = (Math.random() - .5) * 4;
+    firefliesPositionArray[offset + 1] = Math.random() * 2 + .2;
+    firefliesPositionArray[offset + 2] = (Math.random() - .5) * 4;
+
+    firefliesSizeScaleArray[i] = Math.random();
+}
+firefliesGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(firefliesPositionArray, 3)
+);
+firefliesGeometry.setAttribute(
+    'aScale',
+    new THREE.BufferAttribute(firefliesSizeScaleArray, 1)
+);
+
+const firefliesMaterial = new THREE.ShaderMaterial({
+    vertexShader: fireflyVertexShader,
+    fragmentShader: fireflyFragmentShader,
+    uniforms: {
+        uTime: new THREE.Uniform(0),
+        uPixelRatio: new THREE.Uniform(
+            Math.min(window.devicePixelRatio, 2)
+        ),
+        uSize: new THREE.Uniform(50),
+        uNoise: new THREE.Uniform(noiseTexture)
+    },
+    transparent: true,
+    depthTest: false,
+    blending: THREE.AdditiveBlending
+});
+
+gui.add(firefliesMaterial.uniforms.uSize, 'value')
+    .min(0).max(100).step(1).name('Firefly Size');
+
+const fireflies = new THREE.Points(firefliesGeometry, firefliesMaterial);
+scene.add(fireflies);
+
+/**
  * Sizes
  */
 const sizes = new Dimension();
@@ -101,6 +149,10 @@ sizes.onResize(([width, height]) => {
     // Update renderer
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Update pixel ratio on firefly material
+    firefliesMaterial.uniforms.uPixelRatio.value =
+        Math.min(window.devicePixelRatio, 2)
 });
 
 /**
@@ -131,6 +183,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor('#112');
 
 /**
  * Animate
@@ -141,6 +194,7 @@ renderer.setAnimationLoop(function animation() {
     const elapsedTime = clock.getElapsedTime();
     bgMaterial.uniforms.uTime.value = elapsedTime;
     waterMaterial.uniforms.uTime.value = elapsedTime;
+    firefliesMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
