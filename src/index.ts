@@ -56,9 +56,6 @@ const bgMaterial = new THREE.ShaderMaterial({
     }
 });
 
-gui.add(bgMaterial.uniforms.uMixStrength, 'value')
-    .min(0).max(1).step(.01);
-
 // Draco loaders
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('./draco/');
@@ -119,14 +116,25 @@ const bonfireMaterial = new THREE.ShaderMaterial({
         uSize: new THREE.Uniform(10),
         uPixelRatio: new THREE.Uniform(
             Math.min(window.devicePixelRatio, 2)
-        )
+        ),
+        uSparkSpeed: new THREE.Uniform(80),
+        uSparkHeight: new THREE.Uniform(.6),
+        uSparkSizeMultiplier: new THREE.Uniform(12)
     }
 });
-const bonFire = new THREE.Points(
+const bonfire = new THREE.Points(
     bonfireGeometry,
     bonfireMaterial
 );
-scene.add(bonFire);
+scene.add(bonfire);
+
+const bonfireGUI = gui.addFolder('Bonfire');
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkHeight, 'value')
+    .min(0).max(1).step(.01).name('Spark Height');
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkSizeMultiplier, 'value')
+    .min(0).max(100).step(1).name('Size Multiplier')
+bonfireGUI.add(bonfireMaterial.uniforms.uSparkSpeed, 'value')
+    .min(1).max(100).step(1).name('Spark Speed');
 
 /**
  *  Fireflies 
